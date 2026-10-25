@@ -1,0 +1,728 @@
+
+/* ========================================
+   FEZMO FURNITURE - ROOM VISUALIZER
+======================================== */
+
+.visualizer-page {
+  --ink: #292b25;
+  --muted: #77796f;
+  --cream: #f7f5ef;
+  --line: #e5e1d8;
+  --accent: #626c50;
+  --accent-dark: #4b543d;
+  --white: #ffffff;
+
+  width: min(1180px, 92%);
+  margin: 0 auto;
+  padding: 55px 0 70px;
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.visualizer-page *,
+.visualizer-page *::before,
+.visualizer-page *::after {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   PAGE HEADING
+======================================== */
+
+.visualizer-heading {
+  max-width: 740px;
+  margin: 0 auto 42px;
+  text-align: center;
+}
+
+.visualizer-eyebrow {
+  margin: 0 0 12px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+.visualizer-heading h1 {
+  margin: 0 0 15px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(30px, 4.5vw, 48px);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.visualizer-heading > p:last-child {
+  max-width: 600px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* ========================================
+   MAIN WORKSPACE
+======================================== */
+
+.visualizer-workspace {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ========================================
+   IMAGE UPLOAD CARDS
+======================================== */
+
+.upload-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin-bottom: 28px;
+}
+
+.upload-card {
+  min-width: 0;
+  padding: 25px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.upload-card h2 {
+  margin: 0 0 9px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 23px;
+  font-weight: 400;
+}
+
+.upload-card > p {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.upload-button {
+  display: inline-flex;
+  min-height: 45px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border: 1px solid var(--accent);
+  background: var(--white);
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.upload-button:hover {
+  background: var(--accent);
+  color: var(--white);
+}
+
+.upload-button input[type="file"] {
+  display: none;
+}
+
+.upload-thumbnail {
+  display: block;
+  width: 100%;
+  height: 210px;
+  margin-top: 22px;
+  object-fit: contain;
+  background: var(--cream);
+}
+
+/* Checkerboard background to show transparent pixels */
+
+.sofa-thumbnail {
+  background-color: #f5f3ee;
+  background-image:
+    linear-gradient(45deg, #dedbd3 25%, transparent 25%),
+    linear-gradient(-45deg, #dedbd3 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #dedbd3 75%),
+    linear-gradient(-45deg, transparent 75%, #dedbd3 75%);
+  background-size: 20px 20px;
+  background-position:
+    0 0,
+    0 10px,
+    10px -10px,
+    -10px 0;
+}
+
+/* ========================================
+   STATUS AND ERROR MESSAGES
+======================================== */
+
+.visualizer-processing {
+  margin: 15px 0;
+  color: var(--accent);
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.visualizer-error {
+  margin: 0 0 18px;
+  padding: 13px 15px;
+  border: 1px solid #e7c5c0;
+  background: #fff5f3;
+  color: #a3332a;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* ========================================
+   PREVIEW PANEL
+======================================== */
+
+.preview-panel {
+  min-width: 0;
+  padding: 26px;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.preview-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.preview-heading .visualizer-eyebrow {
+  margin-bottom: 8px;
+}
+
+.preview-heading h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 26px;
+  font-weight: 400;
+}
+
+.preview-tag {
+  flex-shrink: 0;
+  padding: 9px 12px;
+  background: var(--cream);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* ========================================
+   ROOM IMAGE STAGE
+======================================== */
+
+.room-stage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--cream);
+  line-height: 0;
+  isolation: isolate;
+}
+
+.room-background {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Isolated sofa image placed over the room */
+
+.sofa-overlay {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  height: auto;
+  max-width: none;
+  margin: 0;
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.sofa-overlay:active {
+  cursor: grabbing;
+}
+
+.stage-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: max-content;
+  max-width: 85%;
+  padding: 13px 18px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+/* Empty preview before room upload */
+
+.preview-empty {
+  display: grid;
+  min-height: 320px;
+  align-content: center;
+  justify-items: center;
+  padding: 30px;
+  background: var(--cream);
+  text-align: center;
+}
+
+.preview-empty-icon {
+  margin-bottom: 15px;
+  color: var(--accent);
+  font-size: 42px;
+}
+
+.preview-empty h3 {
+  margin: 0 0 10px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 23px;
+  font-weight: 400;
+}
+
+.preview-empty p {
+  max-width: 330px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* ========================================
+   SOFA CONTROLS
+======================================== */
+
+.sofa-controls {
+  padding-top: 27px;
+}
+
+.control-label {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 23px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.control-label input[type="range"] {
+  display: block;
+  width: 100%;
+  margin: 4px 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.control-label select {
+  width: 100%;
+  max-width: 340px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  outline-color: var(--accent);
+  background: var(--white);
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.drag-tip {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* ========================================
+   ACTION BUTTONS
+======================================== */
+
+.preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.generate-button,
+.reset-button {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 21px;
+  border: 1px solid var(--accent);
+  border-radius: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.generate-button {
+  background: var(--accent);
+  color: var(--white);
+}
+
+.generate-button:hover {
+  border-color: var(--accent-dark);
+  background: var(--accent-dark);
+}
+
+.reset-button {
+  background: var(--white);
+  color: var(--accent);
+}
+
+.reset-button:hover {
+  background: var(--cream);
+}
+
+.reset-all {
+  margin-top: 20px;
+}
+
+.generate-button:focus-visible,
+.reset-button:focus-visible,
+.upload-button:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.generate-button:disabled,
+.reset-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* ========================================
+   PRIVACY NOTE
+======================================== */
+
+.privacy-note {
+  max-width: 680px;
+  margin: 20px auto 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 760px) {
+  .visualizer-page {
+    width: 94%;
+    padding: 40px 0 55px;
+  }
+
+  .visualizer-heading {
+    margin-bottom: 30px;
+  }
+
+  .upload-panel {
+    gap: 15px;
+  }
+
+  .upload-card {
+    padding: 19px;
+  }
+
+  .preview-panel {
+    padding: 20px;
+  }
+
+  .upload-thumbnail {
+    height: 175px;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 560px) {
+  .visualizer-page {
+    width: 92%;
+    padding: 32px 0 45px;
+  }
+
+  .visualizer-heading h1 {
+    font-size: 32px;
+  }
+
+  .visualizer-heading > p:last-child {
+    font-size: 13px;
+  }
+
+  .upload-panel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+  }
+
+  .upload-card {
+    padding: 20px;
+  }
+
+  .upload-card h2 {
+    font-size: 21px;
+  }
+
+  .upload-thumbnail {
+    height: 190px;
+  }
+
+  .preview-panel {
+    padding: 15px;
+  }
+
+  .preview-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .preview-heading h2 {
+    font-size: 24px;
+  }
+
+  .preview-empty {
+    min-height: 230px;
+    padding: 20px;
+  }
+
+  .preview-actions {
+    flex-direction: column;
+  }
+
+  .preview-actions button {
+    width: 100%;
+  }
+
+  .control-label select {
+    max-width: none;
+  }
+
+  .reset-all {
+    width: 100%;
+  }
+}
+
+
+/* Sofa colour selection */
+.sofa-color-controls {
+  width: 100%;
+  margin-top: 24px;
+  padding: 22px 0;
+  border-top: 1px solid #e5e1d8;
+  border-bottom: 1px solid #e5e1d8;
+}
+
+.sofa-color-controls .control-label {
+  display: block;
+  margin-bottom: 18px;
+  color: #34382f;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.sofa-color-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  row-gap: 24px;
+}
+
+.sofa-color-option {
+  display: flex;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 2px solid #e5e1d8;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 8%);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    outline-color 0.2s ease;
+}
+
+.sofa-color-option:hover {
+  transform: scale(1.1);
+}
+
+.sofa-color-option.selected {
+  outline: 2px solid #687354;
+  outline-offset: 4px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+}
+
+.color-check {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgb(0 0 0 / 70%);
+}
+
+.selected-color-name {
+  margin-top: 20px;
+  color: #626c50;
+  font-size: 13px;
+}
+
+.sofa-overlay {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+@media (max-width: 480px) {
+  .sofa-color-options {
+    gap: 18px;
+    row-gap: 22px;
+  }
+
+  .sofa-color-option {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+  }
+}
+
+
+
+.sofa-color-controls {
+  width: 100%;
+  margin-top: 24px;
+  padding: 22px 0;
+  border-top: 1px solid #e5e1d8;
+  border-bottom: 1px solid #e5e1d8;
+}
+
+.sofa-color-controls .control-label {
+  display: block;
+  margin-bottom: 18px;
+  color: #34382f;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sofa-color-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  row-gap: 24px;
+}
+
+.sofa-color-option {
+  display: flex;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 2px solid #e5e1d8;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 12%);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sofa-color-option:hover {
+  transform: scale(1.1);
+}
+
+.sofa-color-option.selected {
+  outline: 2px solid #687354;
+  outline-offset: 4px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 18%);
+}
+
+.color-check {
+  color: #fff;
+  font-size: 23px;
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgb(0 0 0 / 80%);
+}
+
+.selected-color-name {
+  margin-top: 20px;
+  color: #626c50;
+  font-size: 13px;
+}
+
+.sofa-overlay {
+  position: absolute;
+  z-index: 2;
+  max-width: none;
+  height: auto;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.sofa-overlay:active {
+  cursor: grabbing;
+}
+
+.room-stage {
+  position: relative;
+  overflow: hidden;
+}
+
+.room-background {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 480px) {
+  .sofa-color-options {
+    gap: 18px;
+    row-gap: 22px;
+  }
+
+  .sofa-color-option {
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
+  }
+}
+
+
